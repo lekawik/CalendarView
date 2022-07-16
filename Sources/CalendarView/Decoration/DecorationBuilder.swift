@@ -7,24 +7,37 @@
 
 import UIKit
 
-@resultBuilder
-public struct DecorationBuilder {
+/// A custom parameter attribute that constructs decorations from closures.
+@resultBuilder public struct DecorationBuilder {
+
+	/// Builds an empty decoration from a block containing no statements.
 	public static func buildBlock() -> EmptyDecoration {
 		EmptyDecoration()
 	}
 
+	/// Passes a single decoration as a child decoration through unmodified.
+	///
+	/// An example of a single view written as a child view is
+	///  `{ CircleDecoration() }`
 	public static func buildBlock<Content: Decoration>(_ content: Content) -> Content {
 		content
 	}
 
+	/// Provides support for “if” statements in multi-statement closures,
+	/// producing an optional view that is visible only when the condition
+	/// evaluates to `true`.
 	public static func buildOptional<Content: Decoration>(_ content: Content?) -> _OptionalContent<Content> {
 		_OptionalContent(content: content)
 	}
 
+	/// Provides support for "if" statements in multi-statement closures,
+	/// producing conditional content for the "then" branch.
 	public static func buildEither<TrueContent: Decoration, FalseContent: Decoration>(first: TrueContent) -> _ConditionalDecoration<TrueContent, FalseContent> {
 		_ConditionalDecoration(storage: .trueContent(first))
 	}
 
+	/// Provides support for "if-else" statements in multi-statement closures,
+	/// producing conditional content for the "else" branch.
 	public static func buildEither<TrueContent: Decoration, FalseContent: Decoration>(second: FalseContent) -> _ConditionalDecoration<TrueContent, FalseContent> {
 		_ConditionalDecoration(storage: .falseContent(second))
 	}

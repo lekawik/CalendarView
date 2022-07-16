@@ -10,6 +10,8 @@ import SwiftUI
 /// A decoration that displayes a SwiftUI view.
 ///
 /// Use a ``CustomDecoration`` instance when yout want to add custom views to your calendar.
+/// If you plan on using this decoration  to show an image or a circle, prefer using
+/// ``ImageDecoration`` and ``CircleDecoration`` respectivly.
 public struct CustomDecoration<CustomView: View>: Decoration {
 	private var color: UIColor? = .systemFill
 	private var size: Size = .medium

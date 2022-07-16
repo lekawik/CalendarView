@@ -14,9 +14,7 @@ public struct ImageDecoration: Decoration {
 	private var image: UIImage?
 	private var color: UIColor? = .systemFill
 	private var size: Size = .medium
-}
 
-extension ImageDecoration {
 	/// Creates an image that you can use as decoration for your calendar.
 	///
 	///		ImageDecoration("plane")
@@ -27,7 +25,9 @@ extension ImageDecoration {
 	public init(_ name: String, bundle: Bundle? = nil) {
 		self.image = UIImage(named: name, in: bundle, compatibleWith: nil)
 	}
+}
 
+extension ImageDecoration {
 	/// Creates a system symbol image that you can use as decoration for your calendar.
 	///
 	/// 	ImageDecoration(systemName: "plane")
