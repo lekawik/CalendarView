@@ -13,6 +13,13 @@ import UIKit
 public struct CircleDecoration: Decoration {
 	private var color: UIColor? = .systemFill
 	private var size: Size = .medium
+
+	/// Creates a circle that you can use as decoration for your calendar.
+	///
+	///		CircleDecoration()
+	///
+	///
+	public init() {}
 }
 
 extension CircleDecoration: BuiltInDecoration {
