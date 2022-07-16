@@ -7,30 +7,31 @@
 
 import UIKit
 
-protocol Decoration {
-	associatedtype Body: Decoration
-	@CalendarDecorationBuilder var body: Self.Body { get }
+/// A type that represents part of your calendar's decorations and provides modifier that you can use to configure decorations.
+public protocol Decoration {
+	associatedtype DecorationBody: Decoration
+	@DecorationBuilder var body: Self.DecorationBody { get }
+}
+
+extension Decoration where DecorationBody == Never {
+	public var body: Never { fatalError("This should never be called.") }
 }
 
 extension Decoration {
-	internal func _toUIKitDecoration() -> UICalendarView.Decoration? {
-		if let builtin = self as? BuiltInDecoration {
-			return builtin.toUIKitDecoration()
+	internal func _UIKitDecoration() -> UICalendarView.Decoration? {
+		if let builtIn = self as? BuiltInDecoration {
+			return builtIn.UIKitDecoration()
 		} else {
-			return body._toUIKitDecoration()
+			return body._UIKitDecoration()
 		}
 	}
 }
 
-protocol BuiltInDecoration {
-	func toUIKitDecoration() -> UICalendarView.Decoration?
+internal protocol BuiltInDecoration {
+	func UIKitDecoration() -> UICalendarView.Decoration?
 	typealias Body = Never
-}
-
-extension Decoration where Body == Never {
-	var body: Never { fatalError("This should never be called.") }
 }
 
 extension Never: Decoration {
-	typealias Body = Never
+	public typealias DecorationBody = Never
 }

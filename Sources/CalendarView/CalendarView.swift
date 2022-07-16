@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct CalendarView: UIViewRepresentable {
+public struct CalendarView: UIViewRepresentable {
 
 	// Properties set through init
 	var dateRange: DateInterval? = nil
@@ -26,11 +26,11 @@ struct CalendarView: UIViewRepresentable {
 
 	private let calendarView = UICalendarView()
 
-	func makeCoordinator() -> Coordinator {
+	public func makeCoordinator() -> Coordinator {
 		return Coordinator(self)
 	}
 
-	func makeUIView(context: Context) -> UICalendarView {
+	public func makeUIView(context: Context) -> UICalendarView {
 		calendarView.delegate = context.coordinator
 		calendarView.fontDesign = fontDesign.uiKit
 		calendarView.wantsDateDecorations = decorationForDateComponents != nil
@@ -55,55 +55,55 @@ struct CalendarView: UIViewRepresentable {
 		return calendarView
 	}
 
-	func updateUIView(_ uiView: UICalendarView, context: Context) {
+	public func updateUIView(_ uiView: UICalendarView, context: Context) {
 		calendarView.reloadDecorations(forDateComponents: selectedDates.compactMap({ $0 }), animated: false)
 	}
 }
 
 // MARK: - UICalendarViewDelegate
 extension CalendarView {
-	class Coordinator: NSObject, UICalendarViewDelegate, UICalendarSelectionSingleDateDelegate, UICalendarSelectionMultiDateDelegate {
+	public class Coordinator: NSObject, UICalendarViewDelegate, UICalendarSelectionSingleDateDelegate, UICalendarSelectionMultiDateDelegate {
 		var parent: CalendarView
 
 		init(_ parent: CalendarView) {
 			self.parent = parent
 		}
 
-		func calendarView(_ calendarView: UICalendarView, decorationFor dateComponents: DateComponents) -> UICalendarView.Decoration? {
+		public func calendarView(_ calendarView: UICalendarView, decorationFor dateComponents: DateComponents) -> UICalendarView.Decoration? {
 			if let decorationForDateComponents = parent.decorationForDateComponents {
-				return decorationForDateComponents(dateComponents)._toUIKitDecoration()
+				return decorationForDateComponents(dateComponents)._UIKitDecoration()
 			}
 			return nil
 		}
 
-		func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
+		public func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
 			let previousDate = parent.selectedDates.first ?? nil
 			parent.selectedDates = [dateComponents]
 			parent.calendarView.reloadDecorations(forDateComponents: parent.selectedDates.inserting(previousDate).compactMap { $0 }, animated: true)
 		}
 
-		func dateSelection(_ selection: UICalendarSelectionSingleDate, canSelectDate dateComponents: DateComponents?) -> Bool {
+		public func dateSelection(_ selection: UICalendarSelectionSingleDate, canSelectDate dateComponents: DateComponents?) -> Bool {
 			if let allowSelectionForDateComponents = parent.allowSelectionForDateComponents, let dateComponents {
 				return allowSelectionForDateComponents(dateComponents)
 			}
 			return true
 		}
 
-		func multiDateSelection(_ selection: UICalendarSelectionMultiDate, didSelectDate dateComponents: DateComponents) {
+		public func multiDateSelection(_ selection: UICalendarSelectionMultiDate, didSelectDate dateComponents: DateComponents) {
 			parent.selectedDates.insert(dateComponents)
 			parent.calendarView.reloadDecorations(forDateComponents: parent.selectedDates.inserting(dateComponents).compactMap { $0 }, animated: true)
 		}
 
-		func multiDateSelection(_ selection: UICalendarSelectionMultiDate, didDeselectDate dateComponents: DateComponents) {
+		public func multiDateSelection(_ selection: UICalendarSelectionMultiDate, didDeselectDate dateComponents: DateComponents) {
 			parent.selectedDates.remove(dateComponents)
 			parent.calendarView.reloadDecorations(forDateComponents: parent.selectedDates.inserting(dateComponents).compactMap { $0 }, animated: true)
 		}
 
-		func multiDateSelection(_ selection: UICalendarSelectionMultiDate, canSelectDate dateComponents: DateComponents) -> Bool {
+		public func multiDateSelection(_ selection: UICalendarSelectionMultiDate, canSelectDate dateComponents: DateComponents) -> Bool {
 			return parent.allowSelectionForDateComponents?(dateComponents) ?? true
 		}
 
-		func multiDateSelection(_ selection: UICalendarSelectionMultiDate, canDeselectDate dateComponents: DateComponents) -> Bool {
+		public func multiDateSelection(_ selection: UICalendarSelectionMultiDate, canDeselectDate dateComponents: DateComponents) -> Bool {
 			return parent.allowDeselectionForDateComponents?(dateComponents) ?? true
 		}
 	}
@@ -111,7 +111,14 @@ extension CalendarView {
 
 // MARK: - Initializers
 extension CalendarView {
-	init(selection: Binding<Set<DateComponents?>>,
+	/// Creates an instance that selects dates in a range.
+	/// - Parameters:
+	///   - selection: The date values being dispalyed and selected
+	///   - range: The exclusive range of selectable dates.
+	///   - calendar: The calendar used, defaults to `current`.
+	///   - locale: The locale used, defaults to `current`.
+	///   - timezone: The timezone used, defaults to `nil`
+	public init(selection: Binding<Set<DateComponents?>>,
 		 in range: DateInterval,
 		 calendar: Calendar = .current,
 		 locale: Locale = .current,
@@ -124,7 +131,13 @@ extension CalendarView {
 		self.timeZone = timezone
 	}
 
-	init(selection: Binding<Set<DateComponents?>>,
+	/// Creates an instance that selects dates with an unbounded range.
+	/// - Parameters:
+	///   - selection: The date values being dispalyed and selected
+	///   - calendar: The calendar used, defaults to `current`.
+	///   - locale: The locale used, defaults to `current`.
+	///   - timezone: The timezone used, defaults to `nil`
+	public init(selection: Binding<Set<DateComponents?>>,
 		 calendar: Calendar = .current,
 		 locale: Locale = .current,
 		 timezone: TimeZone? = nil
@@ -146,7 +159,7 @@ extension CalendarView {
 	///			.fontDesign(.rounded)
 	///
 	///	- Parameter design: The design of the text displayed.
-	func fontDesign(_ design: Font.Design) -> Self {
+	public func fontDesign(_ design: Font.Design) -> Self {
 		var calendarView = self
 		calendarView.fontDesign = design
 		return calendarView
@@ -160,7 +173,7 @@ extension CalendarView {
 	///			.foregroundColor(.systemMint)
 	///
 	///	- Parameter color: The foreground color to use when displaying the calendar.
-	func foregroundColor(_ color: UIColor) -> Self {
+	public func foregroundColor(_ color: UIColor) -> Self {
 		var calendarView = self
 		calendarView.foregroundColor = color
 		return calendarView
@@ -174,7 +187,7 @@ extension CalendarView {
 	///			.allowMultiDateSelection(true)
 	///
 	///	- Parameter allow: A Boolean value that indicates whether multi date selection is enabled.
-	func allowMultiDateSelection(_ allow: Bool) -> Self {
+	public func allowMultiDateSelection(_ allow: Bool) -> Self {
 		var calendarView = self
 		calendarView.allowMultiDateSelection = allow
 		return calendarView
@@ -190,7 +203,7 @@ extension CalendarView {
 	///			}
 	///
 	///	- Parameter selectionFor: A closure passing a date and returning a boolean value.
-	func allowSelection(for selectionFor: @escaping (DateComponents) -> Bool) -> Self {
+	public func allowSelection(for selectionFor: @escaping (DateComponents) -> Bool) -> Self {
 		var calendarView = self
 		calendarView.allowSelectionForDateComponents = selectionFor
 		return calendarView
@@ -206,7 +219,7 @@ extension CalendarView {
 	///			}
 	///
 	///	- Parameter selectionFor: A closure passing a date and returning a boolean value.
-	func allowDeselection(for selectionFor: @escaping (DateComponents) -> Bool) -> Self {
+	public func allowDeselection(for selectionFor: @escaping (DateComponents) -> Bool) -> Self {
 		var calendarView = self
 		calendarView.allowDeselectionForDateComponents = selectionFor
 		return calendarView
@@ -223,7 +236,7 @@ extension CalendarView {
 	///			}
 	///
 	///	- Parameter decoration: A closure passing a date and returning a decoration.
-	func decoration(@CalendarDecorationBuilder _ decorationFor: @escaping (DateComponents) -> (any Decoration)) -> Self {
+	public func decoration(@DecorationBuilder _ decorationFor: @escaping (DateComponents) -> (any Decoration)) -> Self {
 		var calendarView = self
 		calendarView.decorationForDateComponents = decorationFor
 		return calendarView
